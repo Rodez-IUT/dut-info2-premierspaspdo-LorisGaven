@@ -38,7 +38,6 @@
 		<form action="all_users.php" method="post">
 			Start with letter : <input type="text" name="lettre">
 			and status is : <select name="status">
-								<option value="all">All</option>
 								<option value="Active account">Active account</option>
 								<option value="Waiting for account validation">Waiting for account validation</option>
 								<option value="Waiting for account deletion">Waiting for account deletion</option>
@@ -59,18 +58,18 @@
 				if (isset($_POST['status'])) {
 					$status = $_POST['status'];
 				}
-				$stmt = $pdo->query('SELECT users.id as user_id, username, email, status.name FROM users JOIN status ON status_id = status.id ORDER BY username');
+				$stmt = $pdo->query("SELECT users.id as user_id, username, email, status.name 
+									 FROM users JOIN status ON status_id = status.id 
+									 WHERE username LIKE '$first_letter%' AND name = '$status'
+									 ORDER BY username");
 				while ($row = $stmt->fetch())
 				{
-					if (isset($_POST['lettre']) && isset($_POST['status']) && ($row['name'] == $status || $status == "all")
-					&& (substr($row['username'], 0, 1) == $first_letter || $first_letter == "")) {
 						echo "<tr>";
 						echo "<td>".$row['user_id']."</td>";
 						echo "<td>".$row['username']."</td>";
 						echo "<td>".$row['email']."</td>";
 						echo "<td>".$row['name']."</td>";
 						echo "</tr>";
-					}
 				}
 			?>
 		</table>
