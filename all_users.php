@@ -53,15 +53,19 @@
 			</tr>
 			<?php
 				if (isset($_POST['lettre'])) {
-					$first_letter = $_POST['lettre'];
+					$first_letter = $_POST['lettre']."%";
 				}
 				if (isset($_POST['status'])) {
 					$status = $_POST['status'];
 				}
-				$stmt = $pdo->query("SELECT users.id as user_id, username, email, status.name 
-									 FROM users JOIN status ON status_id = status.id 
-									 WHERE username LIKE '$first_letter%' AND name = '$status'
-									 ORDER BY username");
+				$sql = "SELECT users.id as user_id, username, email, status.name 
+						FROM users JOIN status ON status_id = status.id 
+						WHERE username LIKE ? AND name = ?
+						ORDER BY username";
+				
+				$stmt = $pdo->prepare($sql);
+				$stmt->execute([$first_letter, $status]);
+				
 				while ($row = $stmt->fetch())
 				{
 						echo "<tr>";
