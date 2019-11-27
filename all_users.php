@@ -38,9 +38,9 @@
 		<form action="all_users.php" method="post">
 			Start with letter : <input type="text" name="lettre">
 			and status is : <select name="status">
-								<option value="Active account">Active account</option>
-								<option value="Waiting for account validation">Waiting for account validation</option>
-								<option value="Waiting for account deletion">Waiting for account deletion</option>
+								<option value="1">Active account</option>
+								<option value="2">Waiting for account validation</option>
+								<option value="3">Waiting for account deletion</option>
 							</select>
 			<button type="submit">OK</button>
 		</form>
@@ -50,17 +50,20 @@
 				<th>Username</th>
 				<th>Email</th>
 				<th>Status</th>
+				<th></th>
 			</tr>
 			<?php
+				$first_letter = "";
+				$status = "";
 				if (isset($_POST['lettre'])) {
 					$first_letter = $_POST['lettre']."%";
 				}
 				if (isset($_POST['status'])) {
 					$status = $_POST['status'];
 				}
-				$sql = "SELECT users.id as user_id, username, email, status.name 
+				$sql = "SELECT users.id as user_id, username, email, status.name
 						FROM users JOIN status ON status_id = status.id 
-						WHERE username LIKE ? AND name = ?
+						WHERE username LIKE ? AND status.id = ?
 						ORDER BY username";
 				
 				$stmt = $pdo->prepare($sql);
@@ -73,6 +76,9 @@
 						echo "<td>".$row['username']."</td>";
 						echo "<td>".$row['email']."</td>";
 						echo "<td>".$row['name']."</td>";
+						if ($row['name'] != 'Waiting for account deletion') {
+							echo "<td><a href=\"all_users.php?user_id=".$row['user_id']."&status_id=3&action=askDeletion\">Ask deletion</a></td>";
+						}
 						echo "</tr>";
 				}
 			?>
