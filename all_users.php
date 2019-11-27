@@ -53,6 +53,21 @@
 				<th></th>
 			</tr>
 			<?php
+				if (isset($_GET['action'])) {
+					$maj = "INSERT INTO action_log (action_date, action_name, user_id)
+							VALUES (NOW(), ?, ?)";
+					
+					$stmt = $pdo->prepare($maj);
+					$stmt->execute([$_GET['action'], $_GET['user_id']]);
+					
+					$delete = "UPDATE users
+							   SET status_id = ?
+							   WHERE id = ?";
+					
+					$stmt = $pdo->prepare($delete);
+					$stmt->execute([$_GET['status_id'], $_GET['user_id']]);
+				}
+			
 				$first_letter = "";
 				$status = "";
 				if (isset($_POST['lettre'])) {
