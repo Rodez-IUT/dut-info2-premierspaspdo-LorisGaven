@@ -38,8 +38,8 @@
 		<form action="all_users.php" method="post">
 			Start with letter : <input type="text" name="lettre">
 			and status is : <select name="status">
-								<option value="1">Active account</option>
-								<option value="2">Waiting for account validation</option>
+								<option value="2">Active account</option>
+								<option value="1">Waiting for account validation</option>
 								<option value="3">Waiting for account deletion</option>
 							</select>
 			<button type="submit">OK</button>
@@ -59,6 +59,8 @@
 					
 					$stmt = $pdo->prepare($maj);
 					$stmt->execute([$_GET['action'], $_GET['user_id']]);
+					
+					throw ERRMODE_EXCEPTION;
 					
 					$delete = "UPDATE users
 							   SET status_id = ?
