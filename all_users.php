@@ -57,10 +57,12 @@
 					$maj = "INSERT INTO action_log (action_date, action_name, user_id)
 							VALUES (NOW(), ?, ?)";
 					
+					try {
+					$pdo->beginTransaction();
 					$stmt = $pdo->prepare($maj);
 					$stmt->execute([$_GET['action'], $_GET['user_id']]);
 					
-					throw ERRMODE_EXCEPTION;
+					/*throw ERRMODE_EXCEPTION;*/
 					
 					$delete = "UPDATE users
 							   SET status_id = ?
@@ -68,6 +70,11 @@
 					
 					$stmt = $pdo->prepare($delete);
 					$stmt->execute([$_GET['status_id'], $_GET['user_id']]);
+					$pdo->commit();
+					} catch (Exception $e) {
+						$pdo->rollBack();
+						throw $e;
+					}
 				}
 			
 				$first_letter = "";
